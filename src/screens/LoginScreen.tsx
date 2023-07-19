@@ -32,11 +32,13 @@ const LoginScreen = ({ route, navigation }:any) => {
     const handleLogin = async () => {
         try {
             setIsLoading(true);
-            await login(dispatch, mail, password);
-            value.handleState?.(true);
+            const res = await login(dispatch, mail, password);
+            if (res)
+                value.handleState?.(true, res);
             setIsLoading(false);
         } catch (error) {
             console.log(error);
+            setIsLoading(false);
         }
     }
 

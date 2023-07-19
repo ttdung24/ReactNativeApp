@@ -1,10 +1,12 @@
 import { Avatar, Divider, Layout, List, ListItem, Text } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-
+import * as SecureStore from 'expo-secure-store';
 import React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { AuthProps, useAuth } from '../context/AuthContext';
+import { API_LINK } from "../../default-value";
+import axios from 'axios';
 
 interface IListItem {
     id: number,
@@ -12,15 +14,30 @@ interface IListItem {
 }
 
 
-
-const handlePress = (item: IListItem, value: AuthProps) => {
+const handlePress = async (item: IListItem, value: AuthProps) => {
     switch (item.id) {
         case 1:
             break;
         case 2:
             break;
         case 3:
-            value.handleState?.(false);
+            try {
+                await SecureStore.deleteItemAsync('my-jwt');
+                await axios.post(`${API_LINK}/auth/logout`,
+                    {
+                        verify_id: value.authState?.accessToken,
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${value.authState?.accessToken}`,
+                        },
+                    }
+                );
+                value.handleState?.(false, {});
+            } catch (error) {
+                console.log(error);
+            }
             break;
     }
 }
@@ -28,23 +45,22 @@ const handlePress = (item: IListItem, value: AuthProps) => {
 const UserScreen = () => {
     const value = useAuth()
     const user = useSelector((state: RootState) => state.account.user)
-    const data = [{id: 1, title: 'Quản lý tài khoản'}, {id: 2, title: 'Logout'}, {id: 3, title: 'Logout'}]
-
+    const data = [{id: 1, title: 'Quản lý tài khoản'}, {id: 2, title: 'Quản lý thông tin người dùng'}, {id: 3, title: 'Logout'}]
     const renderItem = ({ item, index }: {item: IListItem; index: number}): React.ReactElement => (
         <ListItem 
             title={`${item.title}`} 
             onPress={() => handlePress(item, value)}
         />
     );
-
     return (
-        <Layout style={{ flex: 1 }}>
-            <Layout style={styles.avatar}>
+        <Layout level='4' style={{ flex: 1 }}>
+            <Layout level='4' style={styles.avatar}>
                 <Avatar 
                     size='giant'
                     source={require('../../public/avatar/user.png')}
                     style={styles.imageAva}
                 />
+                
                 <Text style={styles.avaName}>{user?.name}</Text>
             </Layout>
 
@@ -60,7 +76,7 @@ const UserScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
-      maxHeight: 180,
+
     },
     avatar: {
         height: 200,
@@ -72,7 +88,7 @@ const styles = StyleSheet.create({
         height: 100
     },
     avaName: {
-        padding: 20,
+        padding: 16,
     }
   });
 

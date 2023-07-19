@@ -9,11 +9,12 @@ import Icon, { Icons } from '../components/Icons';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import Colors from '../constants/Colors';
+import AddTodoScreen from './AddTodoScreen';
 
 const TabArr = [
   { route: 'Home', label: 'Home', type: Icons.Ionicons, activeIcon: 'grid', inActiveIcon: 'grid-outline', component: HomeScreen },
   { route: 'Like', label: 'Like', type: Icons.MaterialCommunityIcons, activeIcon: 'heart-plus', inActiveIcon: 'heart-plus-outline', component: HomeScreen },
-  { route: 'Search', label: 'Search', type: Icons.MaterialCommunityIcons, activeIcon: 'timeline-plus', inActiveIcon: 'timeline-plus-outline', component: HomeScreen },
+  { route: 'Search', label: 'Search', type: Icons.MaterialCommunityIcons, activeIcon: 'timeline-plus', inActiveIcon: 'timeline-plus-outline', component: AddTodoScreen },
   { route: 'Account', label: 'Account', type: Icons.FontAwesome, activeIcon: 'user-circle', inActiveIcon: 'user-circle-o', component: UserScreen },
 ]
 
@@ -60,7 +61,7 @@ const HomePageScreen = (props: any) => {
         paddingBottom: insets.bottom,
       }}
     >
-      <StatusBar style='light' />
+      <StatusBar style='auto' />
       
       <Tab.Navigator 
         screenOptions={({ route }) => ({

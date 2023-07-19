@@ -14,7 +14,7 @@ export default function App() {
     <Provider store={store}>
       <SafeAreaProvider>
         <IconRegistry icons={EvaIconsPack} />
-        <ApplicationProvider {...eva} theme={eva.dark}>
+        <ApplicationProvider {...eva} theme={eva.light}>
           <AppNavigator />
         </ApplicationProvider>
     </SafeAreaProvider>

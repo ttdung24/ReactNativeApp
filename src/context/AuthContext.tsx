@@ -1,14 +1,15 @@
 import * as SecureStore from 'expo-secure-store';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 export interface AuthProps {
     authState?: {
         accessToken: string | null,
         refreshToken: string | null,
         authenticated: boolean | null,
+        accessExpiresAt: string | null,
+        refreshExpiresAt: string | null,
     },
-    handleState?: (authenticated: boolean) => void
+    handleState?: (authenticated: boolean, res: any) => void
 }
 
 const AuthContext = createContext<AuthProps>({})
@@ -22,10 +23,14 @@ export const AuthProvider = ({ children }: any) => {
         accessToken: string | null,
         refreshToken: string | null,
         authenticated: boolean | null,
+        accessExpiresAt: string | null,
+        refreshExpiresAt: string | null,
     }>({
         accessToken: '',
         refreshToken: '',
-        authenticated: false
+        authenticated: false,
+        accessExpiresAt: '',
+        refreshExpiresAt: ''
     });
 
     useEffect(() => {
@@ -33,12 +38,16 @@ export const AuthProvider = ({ children }: any) => {
             try {
                 const data = await SecureStore.getItemAsync('my-jwt');
                 if (data) {
-                    const token = JSON.parse(data || "{}");
-                    setAuthState({
-                        accessToken: token.accessToken,
-                        refreshToken: token.refreshToken,
-                        authenticated: true,
-                    })
+                    const token = JSON.parse(data || "{}")
+                    if (Date.now() < token.refreshExpiresAt) {
+                        setAuthState({
+                            accessToken: token.accessToken,
+                            refreshToken: token.refreshToken,
+                            authenticated: true,
+                            accessExpiresAt: token.accessExpiresAt,
+                            refreshExpiresAt: token.refreshExpiresAt
+                        })
+                    } 
                 }
             } catch (error) {
                 console.log(error);
@@ -49,10 +58,25 @@ export const AuthProvider = ({ children }: any) => {
 
     const value = {
         authState,
-        handleState: (authenticated: boolean) => setAuthState({
-            ...authState,
-            authenticated: authenticated
-        }) 
+        handleState: (authenticated: boolean, res: any) => {
+            if (authenticated === false) {
+                setAuthState({
+                    accessToken: '',
+                    refreshToken: '',
+                    authenticated: false,
+                    accessExpiresAt: '',
+                    refreshExpiresAt: ''
+                })
+            } else {
+                setAuthState({
+                    accessToken: res.accessToken,
+                    refreshToken: res.refreshToken,
+                    authenticated: true,
+                    accessExpiresAt: res.accessExpiresAt,
+                    refreshExpiresAt: res.refreshExpiresAt
+                })
+            }
+        }
     }
 
     return (
