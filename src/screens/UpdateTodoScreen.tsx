@@ -4,17 +4,23 @@ import { Platform, StyleSheet, ToastAndroid } from 'react-native'
 import DateTimePicker, { DateTimePickerEvent }  from '@react-native-community/datetimepicker';
 import { useDispatch } from 'react-redux';
 import { addTodoList } from '../store/apiCall';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type AndroidMode = 'date' | 'time';
 
-const AddTodoScreen = () => {
-    const [nameTodo, setNameTodo] = React.useState('')
-    const [desTodo, setDesTodo] = React.useState('');
+const UpdateTodoScreen = ({route, navigation}: any) => {
+
+    const insets = useSafeAreaInsets();
+
+    const { item } = route.params;
+
+    const [nameTodo, setNameTodo] = React.useState(item.title)
+    const [desTodo, setDesTodo] = React.useState(item.description);
     const [date, setDate] = React.useState(new Date());
     const [show, setShow] = React.useState(false);
     const [mode, setMode] = React.useState("date");
-    const [time, setTime] = React.useState('');
-    const [day, setDay] = React.useState('');
+    const [time, setTime] = React.useState(item.time);
+    const [day, setDay] = React.useState(item.day);
     const dispatch = useDispatch();
 
     const showMode = (sh: boolean, currentMode: string) => {
@@ -43,7 +49,7 @@ const AddTodoScreen = () => {
         }
         try {
             await addTodoList(dispatch, nameTodo, desTodo, time, day);
-            ToastAndroid.show('Bạn đã thêm 1 việc thành công', ToastAndroid.SHORT);
+            ToastAndroid.show('Bạn đã sửa việc thành công', ToastAndroid.SHORT);
         } catch (error) {
             console.log(error)
         }
@@ -56,13 +62,20 @@ const AddTodoScreen = () => {
 
     return (
         <Layout
-            style={styles.container}
+            style={[
+                styles.container, 
+                {
+                    flex: 1,
+                    paddingTop: insets.top,
+                    paddingBottom: insets.bottom,
+                }
+            ]}
         >
             <Text 
                 category='h2'
                 style={styles.topText}
             >
-                Add Todo List
+                Update Todo
             </Text>
             <Input
                 style={styles.mt12}
@@ -75,7 +88,6 @@ const AddTodoScreen = () => {
                 style={styles.mt12}
                 label='Description'
                 placeholder='Description'
-                multiline={true}
                 value={desTodo}
                 onChangeText={nextValue => setDesTodo(nextValue)}
             />
@@ -99,7 +111,7 @@ const AddTodoScreen = () => {
                 style={styles.mt12}
                 onPress={handleAdd}
             >
-                ADD
+                UPDATE
             </Button>
             {show && (
                 <DateTimePicker
@@ -129,4 +141,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AddTodoScreen;
+export default UpdateTodoScreen;

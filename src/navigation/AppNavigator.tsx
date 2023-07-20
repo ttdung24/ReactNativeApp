@@ -7,6 +7,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { useDispatch } from 'react-redux';
 import { fetchTodoList, fetchUser } from '../store/apiCall';
+import UpdateTodoScreen from '../screens/UpdateTodoScreen';
 
 
 const { Navigator, Screen } = createStackNavigator();
@@ -17,15 +18,16 @@ const HomeNavigator = () => {
   useEffect(() => {
     if (value.authState?.authenticated) {
       fetchUser(dispatch, value.authState?.refreshToken!)
-      fetchTodoList(dispatch)
+      fetchTodoList(dispatch)  
     }
-  }, [])
+  }, [value.authState?.authenticated])
 
   return (
     <Navigator screenOptions={{headerShown: false}}>
       {value.authState?.authenticated ? (
         <>
           <Screen name='Homepage' component={HomePageScreen}/>
+          <Screen name='Update' component={UpdateTodoScreen}/>
         </>
       ) : (
         <>
