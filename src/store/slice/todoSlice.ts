@@ -17,7 +17,8 @@ export const todoSlice = createSlice({
         },
 
         updateTodo: (state, action: PayloadAction<ITodo>) => {
-
+            // a.forEach((item, i) => { if (item == 3452) a[i] = 1010; });
+            state.forEach((item: ITodo, i) => {if (item._id == action.payload._id) state[i] = action.payload})
         },
 
         deleteTodo: (state, action: PayloadAction<number>) => {
@@ -27,6 +28,6 @@ export const todoSlice = createSlice({
     }
 })
 
-export const { getTodoList, addTodo, deleteTodo } = todoSlice.actions;
+export const { getTodoList, addTodo, updateTodo, deleteTodo } = todoSlice.actions;
 
 export default todoSlice.reducer;

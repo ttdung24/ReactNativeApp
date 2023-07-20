@@ -3,7 +3,7 @@ import React from 'react'
 import { Platform, StyleSheet, ToastAndroid } from 'react-native'
 import DateTimePicker, { DateTimePickerEvent }  from '@react-native-community/datetimepicker';
 import { useDispatch } from 'react-redux';
-import { addTodoList } from '../store/apiCall';
+import { updateTodoList } from '../store/apiCall';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type AndroidMode = 'date' | 'time';
@@ -41,15 +41,22 @@ const UpdateTodoScreen = ({route, navigation}: any) => {
         }
         showMode(false, "date");
     }
+
+    const navigateHome = () => {
+        navigation.navigate('Homepage', {
+            screen: 'Home',
+        })
+    }
     
-    const handleAdd = async () => {
+    const handleUpdate = async () => {
         if (nameTodo == '' || desTodo == '' || time == '' || day == '') {
             ToastAndroid.show('Vui lòng điền đẩy đủ tất cả các trường', ToastAndroid.SHORT);
             return;
         }
         try {
-            await addTodoList(dispatch, nameTodo, desTodo, time, day);
+            await updateTodoList(dispatch, item._id, nameTodo, desTodo, time, day);
             ToastAndroid.show('Bạn đã sửa việc thành công', ToastAndroid.SHORT);
+            navigateHome()
         } catch (error) {
             console.log(error)
         }
@@ -109,7 +116,7 @@ const UpdateTodoScreen = ({route, navigation}: any) => {
             />
             <Button
                 style={styles.mt12}
-                onPress={handleAdd}
+                onPress={handleUpdate}
             >
                 UPDATE
             </Button>

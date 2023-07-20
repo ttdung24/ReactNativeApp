@@ -4,7 +4,7 @@ import { API_LINK } from "../../default-value";
 import { FirebaseApp } from "../firebase/config";
 import { getAuth, signInWithEmailAndPassword} from "firebase/auth";
 import * as SecureStore from 'expo-secure-store';
-import { getTodoList, addTodo, deleteTodo } from "./slice/todoSlice";
+import { getTodoList, addTodo, deleteTodo, updateTodo } from "./slice/todoSlice";
 import { ITodo } from "../types/todo";
 
 export const login = async (dispatch: any, mail: string, password: string) => {
@@ -75,6 +75,30 @@ export const addTodoList = async (dispatch: any, title: string, des: string, tim
             }
         )
         dispatch(addTodo(res.data.todo))
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const updateTodoList = async (dispatch: any, id: string, title: string, des: string, time: string, day: string) => {
+    try {
+        const url = `${API_LINK}/todo`;
+        const res = await axios.put(url, 
+            {
+                _id: id,
+                title: title,
+                description: des,
+                time: time,
+                day: day
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+            )
+        dispatch(updateTodo(res.data.todo))
+        return res.status
     } catch (error) {
         console.log(error);
     }
