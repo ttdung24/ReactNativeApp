@@ -9,7 +9,7 @@ export const todoSlice = createSlice({
     reducers: {
         
         getTodoList: (state, action: PayloadAction<ITodo[]>) => {
-            state.push(...action.payload);
+            state.splice(0, state.length, ...action.payload);
         },
 
         addTodo: (state, action: PayloadAction<ITodo>) => {
@@ -17,7 +17,6 @@ export const todoSlice = createSlice({
         },
 
         updateTodo: (state, action: PayloadAction<ITodo>) => {
-            // a.forEach((item, i) => { if (item == 3452) a[i] = 1010; });
             state.forEach((item: ITodo, i) => {if (item._id == action.payload._id) state[i] = action.payload})
         },
 

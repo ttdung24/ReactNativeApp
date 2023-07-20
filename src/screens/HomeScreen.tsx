@@ -1,10 +1,10 @@
 import { Card, Layout, List, Text } from '@ui-kitten/components';
-import { Animated, StyleSheet, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react'
+import { Animated, RefreshControl, StyleSheet, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { Swipeable } from 'react-native-gesture-handler';
-import { deleteTodoList } from '../store/apiCall';
+import { deleteTodoList, fetchTodoList } from '../store/apiCall';
 import { ITodo } from '../types/todo';
 
 
@@ -12,12 +12,22 @@ const HomeScreen = ({navigation}: any) => {
 
     const todos = useSelector((state: RootState) => state.todo)
     const dispatch = useDispatch();
+
+    const [refreshing, setRefreshing] = useState(false);
     
     const navigateUpdate = (item: ITodo) => {
         navigation.navigate('Update', {
             item,
         })
     }
+
+    const onRefresh = React.useCallback(async () => {
+        setRefreshing(true);
+        fetchTodoList(dispatch);
+        setTimeout(() => {
+          setRefreshing(false);
+        }, 2000);
+    }, []);
 
     const handlePress = async (info: any) => {
         try {
@@ -79,7 +89,6 @@ const HomeScreen = ({navigation}: any) => {
         )
     };
 
-
     return (
         <Layout 
             style={styles.container}
@@ -92,6 +101,9 @@ const HomeScreen = ({navigation}: any) => {
                 Todo List
             </Text>
             <List
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
                 style={styles.listContainer}
                 contentContainerStyle={styles.contentContainer}
                 data={todos}

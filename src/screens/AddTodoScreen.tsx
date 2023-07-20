@@ -29,9 +29,12 @@ const AddTodoScreen = () => {
 
         let tempDate = new Date(currentDate);
         if (mode === "time") {
+            const hour = tempDate.getHours() < 10 ? `0${tempDate.getHours()}`: `${tempDate.getHours()}`
+            const minute = tempDate.getMinutes() < 10 ? `0${tempDate.getMinutes()}`: `${tempDate.getMinutes()}`
             setTime(tempDate.getHours() + ':' + tempDate.getMinutes());
         } else {
-            setDay(tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear());
+            const month = (tempDate.getMonth() + 1) < 10 ? `0${tempDate.getMonth() + 1}`: `${tempDate.getMonth()}`;
+            setDay(tempDate.getDate() + '/' + month + '/' + tempDate.getFullYear());
         }
         showMode(false, "date");
     }
